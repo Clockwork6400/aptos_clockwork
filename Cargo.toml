@@ -1,0 +1,17 @@
+[package]
+name = "aptos_clockwork"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
+gtk4 = "0.9.2"
+glib = "0.20.4"
+regex = "1"
+reqwest = { version = "0.11", features = ["json"] }
+serde_yaml = "0.9"
+thiserror = "1.0"
+gdk-pixbuf = "0.16"
+chrono = "0.4"
