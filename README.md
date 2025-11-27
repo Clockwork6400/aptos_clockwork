@@ -3,7 +3,7 @@ Works like a clockwork on the Aptos blockchain.
 
 =====================
 
-<img width="827" height="547" alt="Screenshot-2025-11-21-13-58-06" src="https://github.com/user-attachments/assets/700b682c-7f43-422f-a189-c365435aeba8" />
+<img width="827" height="547" alt="Screenshot-2025-11-21-13-58-06" src="https://github.com/user-attachments/assets/90777e78-4523-41c2-ba75-d65f25d1052b" />
 
 
 > Installation
