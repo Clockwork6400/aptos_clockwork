@@ -801,7 +801,13 @@ async fn main() -> Result<(), std::boxed::Box<dyn std::error::Error>> {
 
             // Функция для получения баланса APT
       	    fn get_apt_balance() -> Option<String> {
-      	        let curl_command = "curl -sS 'https://fullnode.mainnet.aptoslabs.com/v1/accounts/0x60919385df081d9b73895462a68d016f9d38eae9f8a4c5d041567c5a0999261d/resources'";
+//      	        let curl_command = "curl -sS 'https://fullnode.mainnet.aptoslabs.com/v1/accounts/0x60919385df081d9b73895462a68d016f9d38eae9f8a4c5d041567c5a0999261d/resources'";
+      	        let curl_command = "curl -sS -X POST 'https://fullnode.mainnet.aptoslabs.com/v1/view' \
+        -H 'Content-Type: application/json' \
+        -d '{\"function\":\"0x1::coin::balance\", \
+             \"type_arguments\":[\"0x1::aptos_coin::AptosCoin\"], \
+             \"arguments\":[\"0x60919385df081d9b73895462a68d016f9d38eae9f8a4c5d041567c5a0999261d\"]}'";
+
       	        let result = Command::new("sh")
       	            .arg("-c")
       	            .arg(curl_command)
@@ -811,13 +817,22 @@ async fn main() -> Result<(), std::boxed::Box<dyn std::error::Error>> {
       	        if !result.stdout.is_empty() {
       	            let output = String::from_utf8_lossy(&result.stdout);
       	            let json_data: serde_json::Value = serde_json::from_str(&output).ok()?;
-      	            for resource in json_data.as_array()? {
-      	                if resource["type"] == "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>" {
-      	                    let balance = resource["data"]["coin"]["value"].as_str()?;
-      	                    let apt_balance = (balance.parse::<f64>().ok()? / 1e8).to_string();
-      	                    return Some(apt_balance);
-      	                }
-      	            }
+//      	            for resource in json_data.as_array()? {
+//      	                if resource["type"] == "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>" {
+//      	                    let balance = resource["data"]["coin"]["value"].as_str()?;
+//      	                    let apt_balance = (balance.parse::<f64>().ok()? / 1e8).to_string();
+//      	                    return Some(apt_balance);
+//      	                }
+//      	            }
+      	            // Ответ от /view — массив, первый элемент = баланс в octas
+	            if let Some(balance_str) = json_data.get(0)?.as_str() {
+	                let apt_balance = (balance_str.parse::<f64>().ok()? / 1e8).to_string();
+	                return Some(apt_balance);
+	            }
+	            if let Some(balance_num) = json_data.get(0)?.as_u64() {
+	                let apt_balance = (balance_num as f64 / 1e8).to_string();
+	                return Some(apt_balance);
+	            }
       	        }
       	        None
       	    }
